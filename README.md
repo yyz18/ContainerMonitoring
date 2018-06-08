@@ -15,24 +15,24 @@
 
 5. Configure Grafana dashboard
 
-5.1 In a browser navigate to http://localhost:3000/	       
-	(for AWS: http://{PUBLIC IP}:3000/, if you are using my account you will notice the       public IP while executing the ansible playbooks)
+	5.1 In a browser navigate to http://localhost:3000/	       
+		(for AWS: http://{PUBLIC IP}:3000/, if you are using my account you will notice the       public IP while executing the ansible playbooks)
 
-5.2 Login using the following credentials
-	User: admin
-	Password: admin
+	5.2 Login using the following credentials
+		User: admin
+		Password: admin
 
-5.3 Add data source
-	Click on Add Data Source
-	Name: prometheus
-	Type: Prometheus
-	URL: http://localhost:9090  (For AWS: http://{PUBLIC IP}:9090)
-	Access: Direct
+	5.3 Add data source
+		Click on Add Data Source
+		Name: prometheus
+		Type: Prometheus
+		URL: http://localhost:9090  (For AWS: http://{PUBLIC IP}:9090)
+		Access: Direct
 
-	Click on Add
-	It should say “Success Data source is working”
+		Click on Add
+		It should say “Success Data source is working”
 
-5.4 Import dashboard 
+	5.4 Import dashboard 
 
 	Navigate to Dahsboard -> Import located under the Grafana logo
 	Click on Upload .josn file
