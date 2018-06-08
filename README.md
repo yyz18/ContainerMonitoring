@@ -2,7 +2,7 @@
 
 2. Build a new container image called containera
 
-docker build -t containera .
+	docker build -t containera .
 
 3. Set target IP address
 
