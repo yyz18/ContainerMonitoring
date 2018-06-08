@@ -2,6 +2,7 @@
 
 2. Build a new container image called containera
 
+
 	docker build -t containera .
 
 3. Set target IP address
@@ -11,6 +12,7 @@
 4. Launch Docker containers
 
 	docker-compose up -d
+
 	docker run -t -d --name ContainerA containera
 
 5. Configure Grafana dashboard
