@@ -17,10 +17,10 @@
 
 5. Configure Grafana dashboard
 
-	5.1 In a browser navigate to http://localhost:3000/	       
+   - In a browser navigate to http://localhost:3000/	       
 	(for AWS: http://{PUBLIC IP}:3000/, if you are using my account you will notice the       public IP while executing the ansible playbooks)
 
-	5.2 Login using the following credentials
+   - Login using the following credentials
 
 	    User: admin
 
