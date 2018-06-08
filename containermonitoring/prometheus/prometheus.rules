@@ -1,0 +1,42 @@
+#######################
+# Alert - Memory Load #
+#######################
+ALERT high_memory_load
+# Alert if memory usage is above 1GB
+ IF container_memory_usage_bytes{name="ContainerA"} >= 524288000
+ FOR 1m
+ LABELS { severity = "High" }
+ ANNOTATIONS {
+      summary = "ContainerA memory usage is above 500MB",
+#      description = "High Memory Load on ContainerA is {{ humanize $value}}%. Reported by instance {{ $labels.instance }}",
+      description = "High Memory Load on ContainerA is {{ humanize container_memory_usage_bytes{name=\"ContainerA\"}}}. Reported by instance {{ $labels.instance }}",
+      runbook = "https://prometheus.io/docs/alerting/configuration/",
+  }
+
+######################
+# Alert - Disk Usage #
+#################### #
+ALERT disk_usage_warning
+ IF ((node_filesystem_size{fstype="ext4",mountpoint="/"} - node_filesystem_avail{fstype="ext4",mountpoint="/"} ) / (node_filesystem_size{fstype="ext4",mountpoint="/"})) * 100 >= 65
+ FOR 1m
+ LABELS { severity = "critical" }
+ ANNOTATIONS {
+      summary = "Server storage is almost full",
+      description = "Disk usage on {{ $labels.job }} is {{ humanize $value }}%. Reported by instance {{ $labels.instance }}.",
+      runbook = "https://prometheus.io/docs/alerting/configuration/",
+  }
+
+
+####################
+# Alert - CPU Load #
+####################
+ALERT high_cpu_load
+ IF 100 * (1 - avg by(instance)(irate(node_cpu{mode='idle'}[1m]))) >= 65
+ FOR 1m
+ LABELS { severity = "critical" }
+ ANNOTATIONS {
+      summary = "Server under high load",
+      description = "High CPU Load on {{ $labels.job }} is {{ humanize $value }}. Reported by instance {{ $labels.instance }}.",
+      runbook = "https://prometheus.io/docs/alerting/configuration/",
+  }
+

@@ -1,0 +1,26 @@
+global:
+  scrape_interval:     15s 
+  evaluation_interval: 15s 
+  external_labels:
+    monitor: 'container-monitor'
+
+rule_files:
+  - 'prometheus.rules'
+
+scrape_configs:
+#Prometheus
+  - job_name: 'prometheus'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['192.168.2.10:9090']  #SET TARGET IP ADDRESS
+
+#cAdvisor
+  - job_name:   'hostname'
+    scrape_interval: 10s
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['192.168.2.10:9911']  #SET TARGET IP ADDRESS
+        labels:
+          group: 'cAdvisor'
+
+

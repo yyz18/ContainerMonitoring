@@ -1,0 +1,184 @@
+# Playbook for creating an AWS instance 
+- name: Create AWS resources
+  hosts: localhost
+  sudo: false
+  connection: local
+  gather_facts: True
+  vars:
+    localhost_public_key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD6AG1ZzacL8IqjlJFlvLAbSQ6OEAM0Z8/hTZwTmUs10hpVGgjh9aMrOcbOnhcSSc1EfnXNXJq6iynchSuUAwD/VMlyjAzUSUaU8jbxQQ7AL0pIvswyQrqJOnwpcBj58XbaDfCzflEMrZaF7o58CS7R353RQGQrt3pSxpZWCzSsrnkQ9hZz6NggDJra2Fv+cKFT39F6+ClVDIN+pbFClE9ECzfTU+Y7Q+u/zy0gpbGkVK/9aGm6iFObf21lM/1/CAWfBqICu1rL6/yrd8twjMcl4HlJQnsC3NAtvACa/zOjrsfyQvN/9SyRre/PKA36XXPtQcrtAs/6nTuR3w781k4v vagrant@ubuntu-xenial
+    aws_access_key: 
+    aws_secret_key: 
+    key_name: containerhost
+    aws_region: us-west-2
+    vpc_id: vpc-11777768
+    ami_id: ami-db710fa3 
+    instance_type: t2.micro
+  tasks:
+  - name: Creating a security group
+    ec2_group:
+      name: ansible
+      description: "Ansible Security Group"
+      region: "{{aws_region}}"
+      vpc_id: "{{vpc_id}}"
+      aws_access_key: "{{aws_access_key}}"
+      aws_secret_key: "{{aws_secret_key}}"
+      rules:
+        - proto: all
+          cidr_ip: 0.0.0.0/0
+        - proto: all
+          group_name: ansible
+      rules_egress:
+        - proto: all
+          cidr_ip: 0.0.0.0/0
+    register: firewall
+  - name: Creating an EC2 instance
+    ec2:
+      aws_access_key: "{{aws_access_key}}"
+      aws_secret_key: "{{aws_secret_key}}"
+      key_name: "{{key_name}}"
+      region: "{{aws_region}}"
+      group_id: "{{firewall.group_id}}"
+      instance_type: "{{instance_type}}"
+      image: "{{ami_id}}"
+      wait: yes
+      volumes:
+        - device_name: /dev/sda1
+          volume_type: gp2
+          volume_size: 10
+          delete_on_termination: true
+      exact_count: 1
+      count_tag:
+         Name: containerhost
+      instance_tags:
+         Name: admin
+      user_data: |
+        #!/bin/bash
+        apt-get update
+        apt-get install -y python-simplejson
+        echo "{{ localhost_public_key }}" >> /home/ubuntu/.ssh/authorized_keys
+    register: admin
+
+  - name: Waiting for the instance to boot
+    wait_for: 
+      host: "{{ item.public_ip }}" 
+      port: 22 
+      delay: 30 
+      timeout: 300 
+      state: started
+    with_items: "{{ admin.instances }}"
+
+  - name: Adding admin node to host group
+    add_host:
+      hostname: "{{ item.public_ip }}"
+      groups: "admin"
+    with_items: "{{ admin.instances }}"
+ 
+# Playbook for installing Docker, Docker-Compose and solution deploymnet
+- name: Install packages and deploy container monitoring solution
+  vars:
+    docker_apt_key: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+    docker_repository: deb [arch=amd64] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} {{ docker_channel }}
+    docker_apt_package_name: "{{ docker_version }}~{{ docker_edition }}~3-0~{{ ansible_distribution | lower }}"
+    docker_apt_cache_time: 86400
+    docker_edition: ce
+    docker_version: 18.04.0
+    docker_users: [] 
+    docker_channel: edge
+    docker_compose_version: 1.21.0
+    docker_daemon_options: []
+    docker_daemon_environment: []
+  hosts: admin 
+  sudo: yes
+  remote_user: ubuntu
+  gather_facts: True
+  tasks:
+  - name: Installing dependencies
+    apt:
+      name: "{{ item }}"
+      state: "present"
+      install_recommends: False
+    with_items:
+      - "apt-transport-https"
+      - "ca-certificates"
+      - "software-properties-common"
+      - "cron"  
+
+  - name: Retreiving upstream APT GPG key
+    apt_key:
+      id: "{{ docker_apt_key }}"
+      keyserver: "{{ ansible_local.core.keyserver
+                     if (ansible_local|d() and ansible_local.core|d() and
+                         ansible_local.core.keyserver)
+                     else 'hkp://pool.sks-keyservers.net' }}"
+      state: "present"  
+
+  - name: Configuring upstream APT repository
+    apt_repository:
+      repo: "{{ docker_repository }}"
+      state: "present"
+      update_cache: True  
+
+  - name: Installing Docker
+    apt:
+      name: "docker-{{ docker_edition }}={{ docker_apt_package_name }}"
+      state: "present"
+      update_cache: True
+      install_recommends: False
+      cache_valid_time: "{{ docker_apt_cache_time }}"  
+
+  - name: Removing Upstart config file
+    file:
+      path: "/etc/default/docker"
+      state: "absent"  
+
+  - name: Ensuring systemd directory exists
+    file:
+      path: "/etc/systemd/system"
+      state: "directory"
+      owner: "root"
+      group: "root"
+      mode: "0755"  
+
+  - name: Generating systemd unit file
+    template:
+      src: "etc/systemd/system/docker.service.j2"
+      dest: "/etc/systemd/system/docker.service"
+      owner: "root"
+      group: "root"
+      mode: "0644"
+    register: docker_register_systemd_service  
+
+  - name: Reloading systemd daemon
+    command: "systemctl daemon-reload"
+
+  - name: Restarting Docker
+    service:
+     name: "docker"
+     state: "restarted"
+
+  - name: Installing Docker Compose
+    get_url:
+      url: "https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64"
+      dest: "/usr/local/bin/docker-compose"
+      force: True
+      owner: "root"
+      group: "root"
+      mode: "0755"
+  
+  - name: Deploying container monitoring solution files
+    copy:
+      src: /vagrant/containermonitoring/
+      dest: /home/ubuntu/
+      directory_mode: yes 
+
+  - name: Switching Prometheus config file from localhost to AWS
+    command: sed -i -e 's/prometheus.yml/prometheus_aws.yml/g' docker-compose.yml 
+
+  - name: Running docker compose
+    command: docker-compose up -d 
+
+  - name: Building container A
+    command: docker build -t containera .
+
+  - name: Running container A
+    command: docker run -t -d --name ContainerA containera

@@ -1,0 +1,49 @@
+global:
+  scrape_interval:     15s 
+  evaluation_interval: 15s 
+  external_labels:
+    monitor: 'container-monitor'
+
+rule_files:
+  - 'prometheus.rules'
+
+scrape_configs:
+#Prometheus
+  - job_name: 'prometheus'
+    scrape_interval: 5s
+    ec2_sd_configs:
+      - region: us-west-2
+        access_key: AKIAIR73AEJ3H7KACLXQ 
+        secret_key: NJqbi83ySu9Gegz4oQLBVSs93A6XjY434AxWMngs
+        port: 9090
+    relabel_configs:
+      - source_labels: [__meta_ec2_public_ip]
+        regex: (.*)
+        replacement: ${1}:9090
+        action: replace
+        target_label: __address__
+#    static_configs:
+#      - targets: ['127.0.0.1:9090']  #SET TARGET IP ADDRESS
+
+#cAdvisor
+  - job_name:   'hostname'
+    scrape_interval: 10s
+    metrics_path: '/metrics'
+    ec2_sd_configs:
+      - region: us-west-2
+        access_key: AKIAIR73AEJ3H7KACLXQ 
+        secret_key: NJqbi83ySu9Gegz4oQLBVSs93A6XjY434AxWMngs
+        port: 9911
+    relabel_configs:
+      - source_labels: [__meta_ec2_public_ip]
+        regex: (.*)
+        replacement: ${1}:9911
+        action: replace
+        target_label: __address__
+
+#    static_configs:
+#      - targets: ['127.0.0.1:9911']  #SET TARGET IP ADDRESS
+#        labels:
+#          group: 'cAdvisor'
+
+
