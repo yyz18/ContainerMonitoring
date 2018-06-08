@@ -18,19 +18,19 @@
 5. Configure Grafana dashboard
 
    5.1 In a browser navigate to http://localhost:3000/	       
-	(for AWS: http://{PUBLIC IP}:3000/, if you are using my account you will notice the       public IP while executing the ansible playbooks)
+       (for AWS: http://{PUBLIC IP}:3000/, if you are using my account you will notice the       public IP while executing the ansible playbooks)
 
-   - Login using the following credentials
+   5.2 Login using the following credentials
 
-	    User: admin
+       User: admin
 
-	    Password: admin
+       Password: admin
 
-	5.3 Add data source
+   5.3 Add data source
 
-	    Click on Add Data Source. Provide the following details:
+       Click on Add Data Source. Provide the following details:
 
-	        Name: prometheus
+         Name: prometheus
 
 	        Type: Prometheus
 
