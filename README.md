@@ -23,12 +23,11 @@
 		Password: admin
 
 	5.3 Add data source
-		Click on Add Data Source
-		Name: prometheus
-		Type: Prometheus
-		URL: http://localhost:9090  (For AWS: http://{PUBLIC IP}:9090)
-		Access: Direct
-
+		Click on Add Data Source. Provide the following details:
+			Name: prometheus
+			Type: Prometheus
+			URL: http://localhost:9090  (For AWS: http://{PUBLIC IP}:9090)
+			Access: Direct
 		Click on Add
 		It should say “Success Data source is working”
 
