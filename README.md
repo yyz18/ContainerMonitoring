@@ -11,7 +11,6 @@
 4. Launch Docker containers
 
    docker-compose up -d
-
    docker run -t -d --name ContainerA containera
 
 5. Configure Grafana dashboard
@@ -22,7 +21,6 @@
    5.2 Login using the following credentials
 
        User: admin
-
        Password: admin
 
    5.3 Add data source
@@ -31,25 +29,18 @@
 
            Name: prometheus
            Type: Prometheus
-
            URL: http://localhost:9090  (For AWS: http://{PUBLIC IP}:9090)
-
            Access: Direct
 
        Click on Add
-
        It should say “Success Data source is working”
 
     5.4 Import dashboard 
 
         Navigate to Dahsboard->Import located under the Grafana logo
-
         Click on Upload .josn file
-
         Locate container_monitoring_v1.josn file
-
         Select Prometheus under Options
-
         Click Import
 
 The dashboard displays CPU, memory, filesystem, network rx, and network tx usage graphs. Once the memory usage reaches 500 MB and stays above 500MB for one minute you will receive an email alert sent to take-home-test@league.pagerduty.com 
