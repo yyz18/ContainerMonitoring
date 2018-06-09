@@ -30,29 +30,28 @@
 
        Click on Add Data Source. Provide the following details:
 
-         Name: prometheus
+           Name: prometheus
+           Type: Prometheus
 
-	        Type: Prometheus
+           URL: http://localhost:9090  (For AWS: http://{PUBLIC IP}:9090)
 
-	        URL: http://localhost:9090  (For AWS: http://{PUBLIC IP}:9090)
+           Access: Direct
 
-	        Access: Direct
+       Click on Add
 
-            Click on Add
+       It should say “Success Data source is working”
 
-            It should say “Success Data source is working”
+    5.4 Import dashboard 
 
-	5.4 Import dashboard 
+        Navigate to Dahsboard->Import located under the Grafana logo
 
-	    Navigate to Dahsboard->Import located under the Grafana logo
+        Click on Upload .josn file
 
-	    Click on Upload .josn file
+        Locate container_monitoring_v1.josn file
 
-	    Locate container_monitoring_v1.josn file
+        Select Prometheus under Options
 
-	    Select Prometheus under Options
-
-	    Click Import
+        Click Import
 
 The dashboard displays CPU, memory, filesystem, network rx, and network tx usage graphs. Once the memory usage reaches 500 MB and stays above 500MB for one minute you will receive an email alert sent to take-home-test@league.pagerduty.com 
 
