@@ -22,8 +22,6 @@ scrape_configs:
         replacement: ${1}:9090
         action: replace
         target_label: __address__
-#    static_configs:
-#      - targets: ['127.0.0.1:9090']  #SET TARGET IP ADDRESS
 
 #cAdvisor
   - job_name:   'hostname'
@@ -40,10 +38,5 @@ scrape_configs:
         replacement: ${1}:9911
         action: replace
         target_label: __address__
-
-#    static_configs:
-#      - targets: ['127.0.0.1:9911']  #SET TARGET IP ADDRESS
-#        labels:
-#          group: 'cAdvisor'
 
 
