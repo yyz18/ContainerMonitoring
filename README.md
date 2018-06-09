@@ -2,18 +2,17 @@
 
 2. Build a new container image called containera
 
-
-	docker build -t containera .
+   docker build -t containera .
 
 3. Set target IP address
 
-	Update scrape_configs in prometheus/prometheus.yml with your host IP address. Note that when deploying to AWS, this modification is not required as there is a separate config file prometheus_aws.yml which uses dynamic service discovery to set the target IP address.
+   Update scrape_configs in prometheus/prometheus.yml with your host IP address. Note that when deploying to AWS, this modification is not required as there is a separate config file prometheus_aws.yml which uses dynamic service discovery to set the target IP address.
 
 4. Launch Docker containers
 
-	docker-compose up -d
+   docker-compose up -d
 
-	docker run -t -d --name ContainerA containera
+   docker run -t -d --name ContainerA containera
 
 5. Configure Grafana dashboard
 
