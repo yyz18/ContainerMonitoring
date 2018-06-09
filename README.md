@@ -43,5 +43,5 @@
         Select Prometheus under Options
         Click Import
 
-The dashboard displays CPU, memory, filesystem, network rx, and network tx usage graphs. Once the memory usage reaches 500 MB and stays above 500MB for one minute you will receive an email alert sent to take-home-test@league.pagerduty.com 
+The dashboard displays CPU, memory, filesystem, network rx, and network tx usage graphs. 
 
