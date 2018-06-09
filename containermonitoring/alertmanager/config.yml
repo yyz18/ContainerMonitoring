@@ -22,4 +22,4 @@ route:
 receivers:
 - name: 'devops'
   email_configs:
-  - to: 'zubayer@gmail.com'
+  - to: 'take-home-test@league.pagerduty.com'
