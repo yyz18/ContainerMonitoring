@@ -13,8 +13,8 @@ scrape_configs:
     scrape_interval: 5s
     ec2_sd_configs:
       - region: us-west-2
-        access_key: AKIAIR73AEJ3H7KACLXQ 
-        secret_key: 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
+        access_key:  
+        secret_key: 
         port: 9090
     relabel_configs:
       - source_labels: [__meta_ec2_public_ip]
@@ -29,8 +29,8 @@ scrape_configs:
     metrics_path: '/metrics'
     ec2_sd_configs:
       - region: us-west-2
-        access_key: AKIAIR73AEJ3H7KACLXQ 
-        secret_key: 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
+        access_key:  
+        secret_key: 
         port: 9911
     relabel_configs:
       - source_labels: [__meta_ec2_public_ip]
