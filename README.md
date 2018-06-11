@@ -58,14 +58,19 @@ The dashboard displays CPU, memory, filesystem, network rx, and network tx usage
        key_name:
        vpc_id:
        
-2. Update source files directory path in playbooks/deploy.yml
+2. Populate the following variables in containermonitoring/Prometheus/prometheus_aws.yml for both Prometheus and cAdvisor scrape configurations
+
+       aws_access_key:
+       aws_secret_key:
+
+3. Update source files directory path in playbooks/deploy.yml
 
        name: Deploying container monitoring solution files
          copy:
            src: /vagrant/containermonitoring/
 
-3. Run Ansible playbook
+4. Run Ansible playbook
 
        ansible-playbook -i inventory/hosts playbooks/deploy.yml
 
-4. Follow step 5 from the previous section
+5. Follow step 5 from the previous section
